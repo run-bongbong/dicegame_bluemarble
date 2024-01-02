@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller - Login</title>
+</head>
+<body>
+
+<h1>Login</h1>
+
+<form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="button" onclick="authenticateUser()">Login</button>
+</form>
+
+<div id="dicePage" style="display: none;">
+    <h1>Welcome to Your Dice Page</h1>
+
+    <button onclick="rollDice()">Roll Dice</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Roll Number</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTableBody"></tbody>
+    </table>
+</div>
+
+<div id="adminPage" style="display: none;">
+    <h1>Welcome to Admin Page</h1>
+
+    <label for="userSelector">Select User:</label>
+    <select id="userSelector"></select>
+    <br>
+    <label for="rollLimit">Set Roll Limit:</label>
+    <input type="number" id="rollLimit" min="1" value="1">
+    <br>
+    <button onclick="setRollLimit()">Set Roll Limit</button>
+</div>
+
+<script>
+let currentUser = null;
+let isAdmin = false;
+let rollNumber = 0;
+
+function authenticateUser() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Simulate user authentication (replace this with actual authentication logic on the server)
+    if (checkCredentials(username, password)) {
+        currentUser = username;
+        isAdmin = checkAdmin(username);
+        if (isAdmin) {
+            populateUserSelector();
+            showAdminPage();
+        } else {
+            showDicePage();
+        }
+    } else {
+        alert('Invalid credentials. Please try again.');
+    }
+}
+
+function checkCredentials(username, password) {
+    // Simulated hardcoded credentials (replace with your authentication logic)
+    const validCredentials = {
+        'user1': 'password1',
+        'user2': 'password2',
+        'user3': 'password3',
+        'admin': 'adminpassword'
+    };
+
+    return validCredentials[username] === password;
+}
+
+function checkAdmin(username) {
+    return username === 'admin';
+}
+
+function showDicePage() {
+    // Hide the login form
+    document.getElementById('loginForm').style.display = 'none';
+
+    // Display the dice page
+    document.getElementById('dicePage').style.display = 'block';
+}
+
+function showAdminPage() {
+    // Hide the login form
+    document.getElementById('loginForm').style.display = 'none';
+
+    // Display the admin page
+    document.getElementById('adminPage').style.display = 'block';
+}
+
+function rollDice() {
+    if (currentUser) {
+        // Check if the user has roll limit
+        const rollLimit = getRollLimit(currentUser);
+
+        if (rollLimit > 0) {
+            // Generate a random number between 1 and 6
+            const diceResult = Math.floor(Math.random() * 6) + 1;
+
+            // Increment the roll number
+            rollNumber++;
+
+            // Display the result in the table
+            displayResult(rollNumber, diceResult);
+
+            // Decrease the roll limit for the user
+            setRollLimit(currentUser, rollLimit - 1);
+        } else {
+            alert('You have reached your roll limit. Please contact the administrator.');
+        }
+    } else {
+        alert('Please login first.');
+    }
+}
+
+function populateUserSelector() {
+    const userSelector = document.getElementById('userSelector');
+
+    // Simulated user list (replace with your actual user list)
+    const users = ['user1', 'user2', 'user3'];
+
+    users.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user;
+        option.textContent = user;
+        userSelector.appendChild(option);
+    });
+}
+
+function setRollLimit() {
+    const userSelector = document.getElementById('userSelector');
+    const selectedUser = userSelector.options[userSelector.selectedIndex].value;
+    const rollLimit = parseInt(document.getElementById('rollLimit').value, 10);
+
+    // Simulated roll limit setting (replace with your actual logic to set roll limits)
+    alert(`Roll limit set to ${rollLimit} for user: ${selectedUser}`);
+}
+
+function getRollLimit(user) {
+    // Simulated roll limits (replace with your actual logic to retrieve roll limits)
+    const rollLimits = {
+        'user1': 3,
+        'user2': 2,
+        'user3': 5
+    };
+
+    return rollLimits[user] || 0;
+}
+
+function setRollLimit(user, limit) {
+    // Simulated roll limit setting (replace with your actual logic to set roll limits)
+    alert(`Roll limit set to ${limit} for user: ${user}`);
+}
+</script>
+
+</body>
+</html>
